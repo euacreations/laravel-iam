@@ -1,0 +1,26 @@
+{
+  "name": "euacreations/laravel-iam",
+  "description": "IAM / RBAC package for Laravel",
+  "type": "library",
+  "license": "MIT",
+
+  "autoload": {
+    "psr-4": {
+      "EuaCreations\\LaravelIam\\": "src/"
+    }
+  },
+
+  "extra": {
+    "laravel": {
+      "providers": [
+        "EuaCreations\\LaravelIam\\LaravelIamServiceProvider"
+      ]
+    }
+  },
+
+  "require": {
+    "php": "^8.2",
+    "illuminate/support": "^11|^12"
+  }
+}
+  
