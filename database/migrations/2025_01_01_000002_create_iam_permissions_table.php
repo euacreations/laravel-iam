@@ -11,6 +11,8 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
+            $table->string('guard_name')->default('web');
+            $table->boolean('is_builtin')->default(false);
             $table->string('group')->nullable();
             $table->timestamps();
         });

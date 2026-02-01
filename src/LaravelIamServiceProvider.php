@@ -12,11 +12,6 @@ class LaravelIamServiceProvider extends ServiceProvider
         $this->publishes([__DIR__.'/../config/iam.php' => config_path('iam.php'),], 'iam-config');
         $this->mergeConfigFrom(__DIR__.'/../config/iam.php','iam');
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-
-        // if ($this->app->runningInConsole()) {
-        //     IamInstaller::ensureBuiltinRoles();
-        // }
-        
     }
 
     public function register(): void
@@ -24,6 +19,7 @@ class LaravelIamServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 \EuaCreations\LaravelIam\Console\IamInstallCommand::class,
+                \EuaCreations\LaravelIam\Console\PermissionCreateCommand::class,
             ]);
         }
     }
