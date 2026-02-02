@@ -4,7 +4,7 @@ namespace EuaCreations\LaravelIam\Traits;
 
 use Illuminate\Support\Collection;
 
-trait HasPermissions
+trait HasFeatures
 {
     /**
      * Check if user has a specific role (by slug)
@@ -15,17 +15,17 @@ trait HasPermissions
     }
 
     /**
-     * Check if user has a permission (by slug)
+     * Check if user has a feature (by slug)
      */
-    public function hasPermission(string $permission): bool
+    public function hasFeature(string $feature): bool
     {
         if (! $this->role) {
             return false;
         }
 
         return $this->role
-            ->permissions
-            ->contains('slug', $permission);
+            ->features
+            ->contains('slug', $feature);
     }
 
     /**
@@ -33,18 +33,18 @@ trait HasPermissions
      */
     public function can($ability, $arguments = []): bool
     {
-        return $this->hasPermission($ability);
+        return $this->hasFeature($ability);
     }
 
     /**
-     * Get all permission slugs for this user
+     * Get all feature slugs for this user
      */
-    public function permissions(): Collection
+    public function features(): Collection
     {
         if (! $this->role) {
             return collect();
         }
 
-        return $this->role->permissions;
+        return $this->role->features;
     }
 }

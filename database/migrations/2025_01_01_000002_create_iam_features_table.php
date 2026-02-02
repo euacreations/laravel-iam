@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create(config('iam.tables.permissions'), function (Blueprint $table) {
+        Schema::create(config('iam.tables.features'), function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
@@ -20,6 +20,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists(config('iam.tables.permissions'));
+        Schema::dropIfExists(config('iam.tables.features'));
     }
 };

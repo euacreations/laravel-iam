@@ -10,7 +10,7 @@ class Role extends Model
 
     protected $casts = [
         'is_builtin' => 'boolean',
-        'auto_assign_new_permissions' => 'boolean',
+        'auto_assign_new_features' => 'boolean',
     ];
     protected $table;
 
@@ -20,11 +20,11 @@ class Role extends Model
 
         $this->table = config('iam.tables.roles', 'iam_roles');
     }    
-    public function permissions()
+    public function features()
     {
         return $this->belongsToMany(
-            Permission::class,
-            config('iam.tables.role_has_permissions')
+            Feature::class,
+            config('iam.tables.role_has_features')
         );
     }
 }

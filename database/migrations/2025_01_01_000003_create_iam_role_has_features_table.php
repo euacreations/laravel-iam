@@ -7,21 +7,21 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create(config('iam.tables.role_has_permissions'), function (Blueprint $table) {
+        Schema::create(config('iam.tables.role_has_features'), function (Blueprint $table) {
             $table->foreignId('role_id')
                 ->constrained(config('iam.tables.roles'))
                 ->cascadeOnDelete();
 
-            $table->foreignId('permission_id')
-                ->constrained(config('iam.tables.permissions'))
+            $table->foreignId('feature_id')
+                ->constrained(config('iam.tables.features'))
                 ->cascadeOnDelete();
 
-            $table->primary(['role_id', 'permission_id']);
+            $table->primary(['role_id', 'feature_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists(config('iam.tables.role_has_permissions'));
+        Schema::dropIfExists(config('iam.tables.role_has_features'));
     }
 };

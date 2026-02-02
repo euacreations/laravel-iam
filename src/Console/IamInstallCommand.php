@@ -12,8 +12,6 @@ class IamInstallCommand extends Command
 
     public function handle(): void
     {
-        $this->info('Installing IAM package...');
-        IamInstaller::ensureBuiltinRoles();
-        $this->info('Built-in roles created successfully!');
+        IamInstaller::install($this);
     }
 }

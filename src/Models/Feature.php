@@ -4,7 +4,7 @@ namespace EuaCreations\LaravelIam\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Permission extends Model
+class Feature extends Model
 {
     protected $table;
 
@@ -20,14 +20,14 @@ class Permission extends Model
     {
         parent::__construct($attributes);
 
-        $this->table = config('iam.tables.permissions');
+        $this->table = config('iam.tables.features', 'iam_features');
     }
 
     public function roles()
     {
         return $this->belongsToMany(
             Role::class,
-            config('iam.tables.role_permissions')
+            config('iam.tables.role_features')
         );
     }
 }

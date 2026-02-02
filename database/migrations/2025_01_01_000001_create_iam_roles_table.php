@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->string('slug')->unique();
             $table->string('guard_name')->default('web');
             $table->boolean('is_builtin')->default(false);
-            $table->boolean('auto_assign_new_permissions')->default(false);
+            $table->boolean('auto_assign_new_features')->default(false);
             $table->timestamps();
         });
     }

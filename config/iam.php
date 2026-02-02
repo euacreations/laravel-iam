@@ -16,10 +16,8 @@ return [
     */
     'tables' => [
         'roles' => 'iam_roles',
-        'permissions' => 'iam_permissions',
-        'model_has_roles' => 'iam_model_has_roles',
-        'model_has_permissions' => 'iam_model_has_permissions',
-        'role_has_permissions' => 'iam_role_has_permissions',
+        'features' => 'iam_features',
+        'role_has_features' => 'iam_role_has_features',
     ],
 
     /*
@@ -29,7 +27,7 @@ return [
     */
     'builtin_roles' => [
         'admin' => [
-            'auto_assign_new_permissions' => true,
+            'auto_assign_new_features' => true,
         ],
     ],
 

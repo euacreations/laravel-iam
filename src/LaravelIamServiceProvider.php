@@ -19,7 +19,7 @@ class LaravelIamServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 \EuaCreations\LaravelIam\Console\IamInstallCommand::class,
-                \EuaCreations\LaravelIam\Console\PermissionCreateCommand::class,
+                \EuaCreations\LaravelIam\Console\FeatureCreateCommand::class,
             ]);
         }
     }
