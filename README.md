@@ -268,7 +268,7 @@ composer test
 
 ### Current Test Coverage
 
-The package includes comprehensive tests using **Pest**:
+The package includes a growing test suite using **Pest**
 
 - ✅ Feature discovery and sync logic
 - ✅ Role-feature assignment rules
