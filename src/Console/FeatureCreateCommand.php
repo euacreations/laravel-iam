@@ -2,9 +2,8 @@
 
 namespace EuaCreations\LaravelIam\Console;
 
+use EuaCreations\LaravelIam\Support\FeatureCreator;
 use Illuminate\Console\Command;
-use EuaCreations\LaravelIam\Models\Feature;
-use EuaCreations\LaravelIam\Models\Role;
 
 class FeatureCreateCommand extends Command
 {
@@ -33,24 +32,6 @@ class FeatureCreateCommand extends Command
         $name = $this->argument('name');
         $group = $this->option('group') ?? null;
 
-        // Check if feature already exists
-        $feature = Feature::firstOrCreate(
-            ['slug' => $slug],
-            [
-                'name' => $name,
-                'group' => $group,
-                'guard_name' => 'web', // default guard
-                'is_builtin' => false,  // user-created
-            ]
-        );
-
-        $this->info("Feature '{$feature->slug}' has been created successfully.");
-
-        // Auto-assign to roles flagged for auto-assignment
-        $roles = Role::where('auto_assign_new_features', true)->get();
-        foreach ($roles as $role) {
-            $role->features()->syncWithoutDetaching($feature->id);
-            $this->info("Feature '{$feature->slug}' assigned to role '{$role->slug}'.");
-        }
+        FeatureCreator::create($this, $slug, $name, $group);
     }
 }

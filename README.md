@@ -51,7 +51,7 @@ Laravel IAM is a feature-first, action-driven authorization system for Laravel. 
 2. Run migrations
 3. Add `role_id` column to `users` table
 4. Ensure `User` model uses IAM trait
-5. Define features using `feature:*` middleware
+5. Define features using `feature` middleware (route name = feature slug)
 6. Run `php artisan iam:sync-features`
 7. Assign roles to users
 8. Use `@can`, `Gate`, or middleware for authorization
@@ -80,18 +80,70 @@ php artisan migrate
 
 ---
 
+## Minimal Installation Requirements
+
+Before running `iam:install`, ensure:
+
+1. At least one user exists in your application.
+   - You can verify with:
+     ```bash
+     php artisan iam:user-list
+     ```
+2. Your `users` table has a `role_id` column.
+3. Your `User` model uses the IAM trait.
+
+If no users exist, `iam:install` will stop and ask you to create the first user.
+
+## Add `role_id` to Users
+
+Create a migration to add the `role_id` column:
+
+```php
+Schema::table('users', function (Blueprint $table) {
+    $table->foreignId('role_id')->nullable()->constrained('iam_roles');
+});
+```
+
+## Add IAM Trait to User
+
+```php
+use EuaCreations\LaravelIam\Traits\HasFeatures;
+
+class User extends Authenticatable
+{
+    use HasFeatures;
+
+    public function role()
+    {
+        return $this->belongsTo(\EuaCreations\LaravelIam\Models\Role::class);
+    }
+}
+```
+
+---
+
 ## Quick Start
 
 ### 1. Define Features in Routes
 
-Features are automatically defined from routes using middleware:
+Features are automatically defined from routes using middleware. When you use
+`feature` without a parameter, the **route name becomes the feature slug**.
+
+```php
+Route::post('/subscriber', [SubscriberController::class, 'store'])
+    ->name('subscriber.create')
+    ->middleware('feature');
+
+Route::delete('/subscriber/{id}', [SubscriberController::class, 'destroy'])
+    ->name('subscriber.delete')
+    ->middleware('feature');
+```
+
+You can still pass an explicit slug:
 
 ```php
 Route::post('/subscriber', [SubscriberController::class, 'store'])
     ->middleware('feature:subscriber.create');
-
-Route::delete('/subscriber/{id}', [SubscriberController::class, 'destroy'])
-    ->middleware('feature:subscriber.delete');
 ```
 
 ### 2. Sync Features
@@ -120,7 +172,7 @@ $role = Role::create([
 ]);
 
 // Assign specific features to role
-$createFeature = Feature::where('key', 'subscriber.create')->first();
+$createFeature = Feature::where('slug', 'subscriber.create')->first();
 $role->features()->attach($createFeature);
 
 // Assign user to role
@@ -144,7 +196,8 @@ if (Gate::allows('subscriber.delete')) {
 
 // Using middleware
 Route::delete('/subscriber/{id}', [SubscriberController::class, 'destroy'])
-    ->middleware('feature:subscriber.delete');
+    ->name('subscriber.delete')
+    ->middleware('feature');
 ```
 
 ---
@@ -160,11 +213,11 @@ roles
  └─ auto_assign_new_features (boolean)
 
 features
- ├─ key (e.g., subscriber.create)
+ ├─ slug (e.g., subscriber.create)
  ├─ name
  └─ description
 
-role_feature (pivot)
+role_has_features (pivot)
  ├─ role_id
  └─ feature_id
 ```
@@ -343,9 +396,44 @@ return [
         'users' => 'users',
         'roles' => 'roles',
         'features' => 'features',
-        'role_feature' => 'role_feature',
+        'role_has_features' => 'role_has_features',
     ],
 ];
+```
+
+---
+
+## Console Commands
+
+### Core
+
+```bash
+php artisan iam:install
+php artisan iam:sync-features
+php artisan iam:feature-prune
+```
+
+### Roles
+
+```bash
+php artisan iam:role-create {slug} {name}
+php artisan iam:role-assign {user} {role}
+php artisan iam:role-feature {role} {features}
+php artisan iam:role-list
+php artisan iam:role-show {role}
+```
+
+### Features
+
+```bash
+php artisan iam:feature-create {slug} {name}
+php artisan iam:feature-list
+```
+
+### Users
+
+```bash
+php artisan iam:user-list
 ```
 
 ---

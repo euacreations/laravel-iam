@@ -2,13 +2,16 @@
 
 namespace EuaCreations\LaravelIam\Support;
 
-use App\Models\User;
 use EuaCreations\LaravelIam\Models\Role;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
 
 class IamInstaller
 {
+    /**
+     * Run the IAM installation flow.
+     */
     public static function install(Command $command): void
     {
         $command->info('Installing IAM package...');
@@ -19,7 +22,9 @@ class IamInstaller
             return;
         }
 
-        $firstUser = User::orderBy('id')->first();
+        /** @var class-string<\Illuminate\Database\Eloquent\Model> $userModel */
+        $userModel = config('iam.user_model', \App\Models\User::class);
+        $firstUser = $userModel::orderBy('id')->first();
 
         // CASE 1: No users
         if (! $firstUser) {
@@ -40,12 +45,14 @@ class IamInstaller
         $command->info('IAM installation completed successfully.');
     }
 
+    /**
+     * Ensure built-in roles exist in storage.
+     */
     public static function ensureBuiltinRoles(bool $skipAdmin = false): void
     {
         $builtinRoles = config('iam.builtin_roles', []);
 
         foreach ($builtinRoles as $slug => $options) {
-
             if ($skipAdmin && $slug === 'admin') {
                 continue;
             }
@@ -64,7 +71,7 @@ class IamInstaller
     }
 
     protected static function assignAdminRoleToFirstUser(
-        User $user,
+        Model $user,
         Command $command
     ): void {
         $adminRole = Role::where('slug', 'admin')->first();
