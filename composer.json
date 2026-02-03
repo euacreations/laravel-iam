@@ -21,6 +21,25 @@
   "require": {
     "php": "^8.2",
     "illuminate/support": "^11|^12"
+  },
+
+  "require-dev": {
+    "orchestra/testbench": "^9.0",
+    "pestphp/pest": "^3.0"
+  },
+
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+
+  "scripts": {
+    "test": "pest"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
   }
 }
-  

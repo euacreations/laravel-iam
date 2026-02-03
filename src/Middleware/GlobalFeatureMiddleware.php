@@ -33,7 +33,7 @@ class GlobalFeatureMiddleware
             return $next($request);
         }
 
-        $user = $request->user();
+        $user = $request->user() ?? auth()->user();
         if (! $user) {
             return $next($request);
         }
