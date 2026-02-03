@@ -45,19 +45,6 @@ Laravel IAM is a feature-first, action-driven authorization system for Laravel. 
 
 ---
 
-## Minimal Integration Checklist
-
-1. Install package via Composer
-2. Run migrations
-3. Add `role_id` column to `users` table
-4. Ensure `User` model uses IAM trait
-5. Define features using `feature` middleware (route name = feature slug)
-6. Run `php artisan iam:sync-features`
-7. Assign roles to users
-8. Use `@can`, `Gate`, or middleware for authorization
-
----
-
 ## Installation
 
 Install via Composer:
@@ -237,7 +224,28 @@ Protect routes with feature-based middleware:
 
 ```php
 Route::post('/subscriber', [SubscriberController::class, 'store'])
-    ->middleware('feature:subscriber.create');
+    ->name('subscriber.create')
+    ->middleware('feature');
+```
+
+### Global Enforcement (Optional)
+
+You can enforce IAM for all named routes by enabling global enforcement:
+
+```
+IAM_ENFORCE_GLOBAL=true
+```
+
+When enabled:
+* All named routes will be checked using their route name as the feature slug
+* Routes with `feature` middleware are respected as-is
+* You can opt out per route using `skip-feature`
+
+Example opt-out:
+
+```php
+Route::get('/health', fn () => 'ok')
+    ->middleware('skip-feature');
 ```
 
 ### Gates
@@ -280,34 +288,12 @@ public function delete(User $user, Subscriber $subscriber)
 
 ---
 
-## User Authentication
+## Authentication vs Authorization
 
-Users authenticate using **username** (email is optional). This supports multiple authentication providers:
-
-### Local Authentication
-```php
-username: john.doe
-password: <secure>
-```
-
-### External Providers
-OAuth providers (Google, Facebook, etc.) map their email to username:
-```php
-username: john.doe@gmail.com  // From Google OAuth
-password: null                 // Local password optional
-```
-
-### Root Admin
-Built-in admin user with special privileges:
-```php
-username: admin
-password: <configured in seeder>
-```
-
-**Admin Capabilities:**
-* Cannot be deleted
-* Always has all features (bypasses feature checks)
-* Automatically receives new features when synced
+Laravel IAM assumes you already authenticate users using Laravel’s auth system
+(Breeze, Jetstream, Fortify, or custom auth). This package only adds
+authorization (roles and feature access), and does not implement login,
+registration, or password management.
 
 ---
 
@@ -382,15 +368,6 @@ php artisan vendor:publish --tag=iam-config
 
 ```php
 return [
-    // Admin username (cannot be changed after seeding)
-    'admin_username' => env('IAM_ADMIN_USERNAME', 'admin'),
-    
-    // Feature key separator
-    'feature_separator' => '.',
-    
-    // Auto-discover features on sync
-    'auto_discover' => true,
-    
     // Database table names
     'tables' => [
         'users' => 'users',
